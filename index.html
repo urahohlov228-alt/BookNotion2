@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Premium Book Tracker v5.5 | Color & Zoom</title>
+    <title>Premium Book Tracker v5.6 | Categories</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -180,6 +180,19 @@
                 🔍
               </button>
             </div>
+            <select
+              id="book-category"
+              class="w-full p-3.5 rounded-xl border border-slate-200 outline-none text-slate-700"
+            >
+              <option value="Інше">Оберіть категорію...</option>
+              <option value="Психологія">Психологія</option>
+              <option value="Бізнес">Бізнес</option>
+              <option value="Біографія">Біографія</option>
+              <option value="Історія">Історія</option>
+              <option value="Технічна Література">Технічна Література</option>
+              <option value="Класика">Класика</option>
+              <option value="Інше">Інше</option>
+            </select>
           </div>
           <div class="space-y-4">
             <select
@@ -325,6 +338,7 @@
           id: editingId || Date.now(),
           title,
           author: document.getElementById("book-author").value,
+          category: document.getElementById("book-category").value, // ЗБЕРІГАЄМО КАТЕГОРІЮ
           pages: parseFloat(document.getElementById("book-pages").value) || 0,
           currentPage:
             parseFloat(document.getElementById("book-current-page").value) || 0,
@@ -386,10 +400,14 @@
                     <h4 class="font-bold text-slate-900 leading-tight mb-1 truncate serif italic text-lg">${
                       book.title
                     }</h4>
-                    <p class="text-[11px] text-slate-400 font-medium truncate uppercase tracking-wider">${
+                    <p class="text-[11px] text-slate-400 font-medium truncate uppercase tracking-wider mb-2">${
                       book.author
                     }</p>
                     
+                    <span class="inline-block self-start text-[9px] font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-md uppercase tracking-wider">${
+                      book.category || "Інше"
+                    }</span>
+
                     ${
                       book.deadline && currentTab === "Reading"
                         ? `<div class="mt-4 text-xs font-mono font-bold text-slate-500 uppercase tracking-tight deadline-timer" data-deadline="${book.deadline}">Loading...</div>`
@@ -478,6 +496,7 @@
         document.getElementById("modal-title").innerText = "Редагувати";
         document.getElementById("book-title").value = b.title;
         document.getElementById("book-author").value = b.author;
+        document.getElementById("book-category").value = b.category || "Інше"; // ЗАВАНТАЖУЄМО КАТЕГОРІЮ
         document.getElementById("book-pages").value = b.pages;
         document.getElementById("book-current-page").value = b.currentPage;
         document.getElementById("book-cover").value = b.coverUrl || "";
@@ -494,6 +513,7 @@
           "book-cover",
           "book-deadline",
         ].forEach((id) => (document.getElementById(id).value = ""));
+        document.getElementById("book-category").value = "Інше";
       }
       window.autoFillCover = async function () {
         const t = document.getElementById("book-title").value;
