@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Premium Book Tracker v5.6 | Categories</title>
+    <title>Premium Book Tracker v5.7 | Fix Edit</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -146,12 +146,33 @@
       <div
         class="bg-white rounded-[1.5rem] p-8 max-w-2xl w-full shadow-2xl space-y-6"
       >
-        <h3
-          id="modal-title"
-          class="text-2xl font-bold serif italic text-slate-900"
+        <div
+          class="flex justify-between items-center border-b border-slate-100 pb-4"
         >
-          Нова книга
-        </h3>
+          <h3
+            id="modal-title"
+            class="text-2xl font-bold serif italic text-slate-900"
+          >
+            Нова книга
+          </h3>
+          <button
+            onclick="closeModal()"
+            class="text-slate-400 hover:text-slate-900 transition-colors"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-4">
             <input
@@ -235,14 +256,14 @@
         </div>
         <div class="flex gap-4 pt-4 border-t border-slate-50">
           <button
-            onclick="toggleModal()"
-            class="flex-1 py-4 font-bold text-slate-400 hover:text-slate-900"
+            onclick="closeModal()"
+            class="flex-1 py-4 font-bold text-slate-400 hover:text-slate-900 transition-colors"
           >
             Скасувати
           </button>
           <button
             onclick="saveBook()"
-            class="flex-1 py-4 bg-slate-900 text-white font-bold rounded-xl shadow-lg"
+            class="flex-1 py-4 bg-slate-900 text-white font-bold rounded-xl shadow-lg transition-transform active:scale-95"
           >
             Зберегти
           </button>
@@ -331,14 +352,17 @@
         }
       };
 
+      // --- ЛОГІКА ЗБЕРЕЖЕННЯ (ВИПРАВЛЕНО) ---
       window.saveBook = function () {
         const title = document.getElementById("book-title").value;
         if (!title) return;
+
         const data = {
+          // Якщо редагуємо, беремо старий ID. Якщо нова - створюємо новий.
           id: editingId || Date.now(),
           title,
           author: document.getElementById("book-author").value,
-          category: document.getElementById("book-category").value, // ЗБЕРІГАЄМО КАТЕГОРІЮ
+          category: document.getElementById("book-category").value,
           pages: parseFloat(document.getElementById("book-pages").value) || 0,
           currentPage:
             parseFloat(document.getElementById("book-current-page").value) || 0,
@@ -346,19 +370,24 @@
           status: document.getElementById("book-status").value,
           deadline: document.getElementById("book-deadline").value,
         };
+
         if (data.pages > 0 && data.currentPage >= data.pages) {
           data.status = "Finished";
           data.currentPage = data.pages;
         }
 
+        // Перевіряємо, чи ми редагуємо (editingId не null)
         if (editingId) {
           const idx = books.findIndex((b) => b.id === editingId);
-          books[idx] = data;
+          if (idx !== -1) {
+            books[idx] = data; // Оновлюємо існуючу
+          }
         } else {
-          books.push(data);
+          books.push(data); // Додаємо нову
         }
+
         saveToFirebase();
-        toggleModal();
+        closeModal(); // Закриваємо модалку правильно
         render();
       };
 
@@ -480,30 +509,44 @@
         timerInterval = setInterval(update, 60000);
       }
 
-      window.toggleModal = function () {
+      // --- КЕРУВАННЯ МОДАЛЬНИМ ВІКНОМ (ВИПРАВЛЕНО) ---
+
+      // Просто показує/ховає, НЕ очищуючи дані
+      function toggleModalVisible() {
         document.getElementById("modal").classList.toggle("hidden");
-        editingId = null;
+      }
+
+      // Викликається при "Скасувати" або "Зберегти" або "Х"
+      window.closeModal = function () {
+        toggleModalVisible(); // Ховаємо
+        editingId = null; // Очищаємо ID, щоб наступне відкриття було чистим
       };
+
+      // Відкриття для додавання
       window.openModalForAdd = function () {
-        editingId = null;
+        editingId = null; // Точно нова книга
         resetInputs();
         document.getElementById("modal-title").innerText = "Нова книга";
-        toggleModal();
+        toggleModalVisible();
       };
+
+      // Відкриття для редагування
       window.openModalForEdit = function (id) {
         const b = books.find((x) => x.id === id);
-        editingId = id;
+        if (!b) return;
+        editingId = id; // Запам'ятовуємо ID
         document.getElementById("modal-title").innerText = "Редагувати";
         document.getElementById("book-title").value = b.title;
         document.getElementById("book-author").value = b.author;
-        document.getElementById("book-category").value = b.category || "Інше"; // ЗАВАНТАЖУЄМО КАТЕГОРІЮ
+        document.getElementById("book-category").value = b.category || "Інше";
         document.getElementById("book-pages").value = b.pages;
         document.getElementById("book-current-page").value = b.currentPage;
         document.getElementById("book-cover").value = b.coverUrl || "";
         document.getElementById("book-status").value = b.status;
         document.getElementById("book-deadline").value = b.deadline || "";
-        toggleModal();
+        toggleModalVisible(); // Просто відкриваємо, не збиваючи editingId
       };
+
       function resetInputs() {
         [
           "book-title",
@@ -515,6 +558,7 @@
         ].forEach((id) => (document.getElementById(id).value = ""));
         document.getElementById("book-category").value = "Інше";
       }
+
       window.autoFillCover = async function () {
         const t = document.getElementById("book-title").value;
         if (!t) return;
