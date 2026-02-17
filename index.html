@@ -3,167 +3,138 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Premium Book Tracker v5.2 | Final</title>
-
+    <title>Premium Book Tracker v5.4 | Smooth Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
-
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap");
-
       body {
         font-family: "Inter", sans-serif;
         background-color: #f9fafb;
         color: #111827;
-        overflow-x: hidden;
+        -webkit-tap-highlight-color: transparent;
       }
       .serif {
         font-family: "Playfair Display", serif;
       }
-
-      /* АНІМАЦІЇ */
       .fade-in-up {
-        animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        animation: fadeInUp 0.4s ease-out forwards;
         opacity: 0;
         transform: translateY(15px);
       }
-
       @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(15px);
-        }
         to {
           opacity: 1;
           transform: translateY(0);
         }
       }
-
-      /* ВКЛАДКИ (Strict Minimalist) */
       .tab-btn {
-        position: relative;
-        transition: all 0.2s ease;
+        transition: all 0.2s;
         border-bottom: 2px solid transparent;
         color: #6b7280;
       }
-
-      .tab-btn:hover {
-        color: #111827;
-      }
-
       .tab-active {
         color: #111827;
         border-bottom-color: #111827;
         font-weight: 600;
       }
-
-      /* Картки */
       .book-card {
         transition: all 0.3s ease;
         border: 1px solid #f3f4f6;
+        position: relative;
       }
       .book-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
-        border-color: #e5e7eb;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
       }
-
+      .control-btn {
+        transition: all 0.2s;
+        user-select: none;
+      }
+      .control-btn:active {
+        transform: scale(0.85);
+        background-color: #e2e8f0;
+      }
       .no-scrollbar::-webkit-scrollbar {
         display: none;
-      }
-      .no-scrollbar {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-      }
-
-      /* Кнопки дій */
-      .plus-btn {
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-      .plus-btn:active {
-        transform: scale(0.9);
       }
     </style>
   </head>
   <body class="p-6 md:p-10 min-h-screen">
     <div class="max-w-6xl mx-auto space-y-10">
       <header
-        class="flex flex-col md:flex-row justify-between items-end gap-6 pb-4 border-b border-slate-200 fade-in-up"
-        style="animation-delay: 0.1s"
+        class="flex justify-between items-end pb-4 border-b border-slate-200 fade-in-up"
       >
-        <div class="space-y-1">
-          <h1 class="text-3xl font-bold tracking-tight text-slate-900 serif">
-            My Library
-          </h1>
+        <div>
+          <h1 class="text-3xl font-bold serif italic">My Library</h1>
           <p
-            class="text-slate-400 text-[10px] font-bold tracking-widest uppercase"
+            class="text-slate-400 text-[10px] font-bold uppercase tracking-widest"
           >
-            Reading Journey
+            Digital Archive
           </p>
         </div>
-        <div id="connection-status" class="hidden">
-          <span class="text-slate-400 text-[10px] font-mono animate-pulse"
-            >● Saving...</span
-          >
+        <div
+          id="connection-status"
+          class="hidden text-slate-400 text-[10px] font-mono animate-pulse"
+        >
+          ● Syncing...
         </div>
       </header>
 
-      <nav class="fade-in-up" style="animation-delay: 0.2s">
-        <div class="overflow-x-auto no-scrollbar">
-          <div class="flex gap-8 border-b border-slate-100 min-w-max px-2">
-            <button
-              onclick="switchTab('Reading')"
-              id="tab-Reading"
-              class="tab-active tab-btn py-4 text-sm font-medium"
-            >
-              Reading
-            </button>
-            <button
-              onclick="switchTab('Queue')"
-              id="tab-Queue"
-              class="tab-inactive tab-btn py-4 text-sm font-medium"
-            >
-              Queue
-            </button>
-            <button
-              onclick="switchTab('Finished')"
-              id="tab-Finished"
-              class="tab-inactive tab-btn py-4 text-sm font-medium"
-            >
-              Finished
-            </button>
-            <button
-              onclick="switchTab('Paused')"
-              id="tab-Paused"
-              class="tab-inactive tab-btn py-4 text-sm font-medium"
-            >
-              Paused
-            </button>
-          </div>
+      <nav class="fade-in-up">
+        <div
+          class="flex gap-8 border-b border-slate-100 overflow-x-auto no-scrollbar"
+        >
+          <button
+            onclick="switchTab('Reading')"
+            id="tab-Reading"
+            class="tab-active tab-btn py-4 text-sm font-medium"
+          >
+            Reading
+          </button>
+          <button
+            onclick="switchTab('Queue')"
+            id="tab-Queue"
+            class="tab-btn py-4 text-sm font-medium"
+          >
+            Queue
+          </button>
+          <button
+            onclick="switchTab('Finished')"
+            id="tab-Finished"
+            class="tab-btn py-4 text-sm font-medium"
+          >
+            Finished
+          </button>
+          <button
+            onclick="switchTab('Paused')"
+            id="tab-Paused"
+            class="tab-btn py-4 text-sm font-medium"
+          >
+            Paused
+          </button>
         </div>
       </nav>
 
-      <main class="fade-in-up" style="animation-delay: 0.3s">
+      <main class="fade-in-up">
         <div class="flex justify-between items-center mb-8">
           <h2
             id="section-title"
-            class="text-xs font-bold uppercase tracking-[0.2em] text-slate-400"
+            class="text-xs font-bold uppercase tracking-widest text-slate-400"
           >
             Активні книги
           </h2>
           <button
             onclick="openModalForAdd()"
-            class="text-xs font-bold bg-slate-900 text-white px-6 py-3 rounded-lg hover:bg-slate-700 transition-all shadow-lg shadow-slate-200 active:scale-95 flex items-center gap-2"
+            class="bg-slate-900 text-white px-6 py-3 rounded-lg text-xs font-bold shadow-lg hover:bg-slate-700 active:scale-95 transition-all"
           >
-            <span>+</span> Додати книгу
+            + Додати книгу
           </button>
         </div>
-
         <div
           id="library-grid"
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[300px]"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         ></div>
       </main>
     </div>
@@ -173,127 +144,92 @@
       class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4"
     >
       <div
-        class="bg-white rounded-[1.5rem] p-8 md:p-10 max-w-2xl w-full shadow-2xl space-y-8 transform transition-all scale-100"
+        class="bg-white rounded-[1.5rem] p-8 max-w-2xl w-full shadow-2xl space-y-6"
       >
-        <div
-          class="flex justify-between items-center border-b border-slate-100 pb-4"
+        <h3
+          id="modal-title"
+          class="text-2xl font-bold serif italic text-slate-900"
         >
-          <h3
-            id="modal-title"
-            class="text-2xl font-bold text-slate-900 serif italic"
-          >
-            Нова книга
-          </h3>
-          <button
-            onclick="toggleModal()"
-            class="text-slate-400 hover:text-slate-900"
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          Нова книга
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="space-y-4">
             <input
               id="book-title"
               type="text"
-              placeholder="Назва книги"
-              class="w-full px-4 py-3.5 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-slate-900 outline-none text-base font-medium text-slate-900"
+              placeholder="Назва"
+              class="w-full p-3.5 rounded-xl border border-slate-200 outline-none focus:ring-2 focus:ring-slate-900"
             />
             <input
               id="book-author"
               type="text"
               placeholder="Автор"
-              class="w-full px-4 py-3.5 rounded-lg border border-slate-200 outline-none"
+              class="w-full p-3.5 rounded-xl border border-slate-200 outline-none"
             />
             <div class="flex gap-2">
               <input
                 id="book-cover"
                 type="text"
                 placeholder="URL обкладинки"
-                class="flex-grow px-4 py-3.5 rounded-lg border border-slate-200 outline-none"
+                class="flex-grow p-3.5 rounded-xl border border-slate-200 outline-none"
               />
               <button
                 onclick="autoFillCover()"
-                class="bg-slate-100 px-4 rounded-lg hover:bg-slate-200 transition-colors"
+                class="bg-slate-100 p-3.5 rounded-xl hover:bg-slate-200"
               >
                 🔍
               </button>
             </div>
-            <input
-              id="book-deadline"
-              type="datetime-local"
-              class="w-full px-4 py-3.5 rounded-lg border border-slate-200 outline-none text-xs text-slate-500"
-            />
           </div>
-
           <div class="space-y-4">
             <select
               id="book-status"
-              class="w-full px-4 py-3.5 rounded-lg border border-slate-200 outline-none"
+              class="w-full p-3.5 rounded-xl border border-slate-200 outline-none"
             >
               <option value="Reading">Читаю</option>
               <option value="Queue">У черзі</option>
               <option value="Finished">Прочитано</option>
               <option value="Paused">На паузі</option>
             </select>
-            <div class="grid grid-cols-2 gap-4">
-              <div class="space-y-1">
+            <div class="grid grid-cols-2 gap-3">
+              <div>
                 <label
-                  class="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1"
+                  class="text-[10px] font-bold text-slate-400 uppercase tracking-widest"
                   >Всього</label
                 ><input
                   id="book-pages"
                   type="number"
-                  class="w-full px-4 py-3 rounded-lg border border-slate-100 bg-slate-50 font-mono"
+                  class="w-full p-3 rounded-xl border border-slate-200 bg-slate-50 font-mono"
                 />
               </div>
-              <div class="space-y-1">
+              <div>
                 <label
-                  class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest ml-1"
+                  class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest"
                   >Поточна</label
                 ><input
                   id="book-current-page"
                   type="number"
-                  class="w-full px-4 py-3 rounded-lg border border-emerald-100 bg-emerald-50 font-mono text-emerald-900"
+                  class="w-full p-3 rounded-xl border border-emerald-100 bg-emerald-50 font-mono"
                 />
               </div>
             </div>
-            <select
-              id="book-genre"
-              class="w-full px-4 py-3.5 rounded-lg border border-slate-200 outline-none"
-            >
-              <option value="Fiction">Фантастика</option>
-              <option value="Business">Бізнес</option>
-              <option value="Psychology">Психологія</option>
-              <option value="Biography">Біографія</option>
-              <option value="History">Історія</option>
-              <option value="Classic">Класика</option>
-              <option value="Other">Інше</option>
-            </select>
+            <input
+              id="book-deadline"
+              type="datetime-local"
+              class="w-full p-3.5 rounded-xl border border-slate-200 outline-none text-xs text-slate-500"
+            />
           </div>
         </div>
-
-        <div class="flex gap-4 pt-6 border-t border-slate-100">
+        <div class="flex gap-4 pt-4 border-t border-slate-50">
           <button
             onclick="toggleModal()"
-            class="flex-1 py-4 text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors"
+            class="flex-1 py-4 font-bold text-slate-400 hover:text-slate-900"
           >
             Скасувати
           </button>
           <button
             onclick="saveBook()"
-            class="flex-1 py-4 bg-slate-900 text-white text-sm font-bold rounded-xl shadow-xl active:scale-95 transition-all hover:bg-black"
+            class="flex-1 py-4 bg-slate-900 text-white font-bold rounded-xl shadow-lg"
           >
             Зберегти
           </button>
@@ -302,7 +238,6 @@
     </div>
 
     <script>
-      // 1. CONFIG
       const firebaseConfig = {
         apiKey: "AIzaSyAbO6lwsmvFkaecs566Hat85u2M5y_JhtM",
         authDomain: "mylibrarytracker.firebaseapp.com",
@@ -313,61 +248,91 @@
         messagingSenderId: "51171012416",
         appId: "1:51171012416:web:ff0d5569470266bac594a5",
       };
-
       firebase.initializeApp(firebaseConfig);
       const db = firebase.database();
+      let books = [],
+        editingId = null,
+        currentTab = "Reading",
+        timerInterval = null;
 
-      let books = [];
-      let editingId = null;
-      let currentTab = "Reading";
-      let timerInterval = null;
-      const statusDiv = document.getElementById("connection-status");
-
-      // 2. DATA SYNC
-      db.ref("books").on("value", (snapshot) => {
-        books = snapshot.val() || [];
-        render();
+      // 1. СЛУХАЄМО ДАНІ ОДИН РАЗ ДЛЯ СТАРТУ
+      db.ref("books").on("value", (snap) => {
+        const newBooks = snap.val() || [];
+        // Оновлюємо інтерфейс тільки якщо змінилася КІЛЬКІСТЬ книг або ТАБ
+        // Це запобігає смиканню при простому натисканні +/-
+        if (JSON.stringify(newBooks) !== JSON.stringify(books)) {
+          books = newBooks;
+          render();
+        }
       });
 
-      window.saveToFirebase = function () {
-        statusDiv.classList.remove("hidden");
+      function saveToFirebase() {
+        document.getElementById("connection-status").classList.remove("hidden");
         db.ref("books")
           .set(books)
           .then(() => {
-            setTimeout(() => statusDiv.classList.add("hidden"), 1000);
+            setTimeout(
+              () =>
+                document
+                  .getElementById("connection-status")
+                  .classList.add("hidden"),
+              800
+            );
           });
-      };
+      }
 
-      // 3. BOOK ACTIONS
-      window.addPage = function (id) {
+      // 2. ОПТИМІЗОВАНА ЗМІНА ПРОГРЕСУ
+      window.changePage = function (id, delta) {
         const idx = books.findIndex((b) => b.id === id);
-        if (idx !== -1 && books[idx].currentPage < books[idx].pages) {
-          books[idx].currentPage += 1;
-          if (books[idx].currentPage >= books[idx].pages) {
-            books[idx].status = "Finished";
-            books[idx].currentPage = books[idx].pages;
-          }
-          saveToFirebase();
+        if (idx === -1) return;
+
+        let b = books[idx];
+        let oldStatus = b.status;
+        let newPage = b.currentPage + delta;
+
+        if (newPage < 0) newPage = 0;
+        if (newPage > b.pages) newPage = b.pages;
+
+        b.currentPage = newPage;
+
+        if (b.currentPage >= b.pages && b.pages > 0) {
+          b.status = "Finished";
+        } else if (b.status === "Finished" && b.currentPage < b.pages) {
+          b.status = "Reading";
         }
+
+        // Оновлюємо конкретні елементи в DOM без перемальовування всього списку
+        const card = document.querySelector(`[data-id="${id}"]`);
+        if (card) {
+          const percent = Math.round((b.currentPage / b.pages) * 100) || 0;
+          card.querySelector(".progress-text").innerText = `${percent}%`;
+          card.querySelector(".page-count").innerText = `${Math.round(
+            b.currentPage
+          )}/${b.pages}`;
+          card.querySelector(".progress-bar-inner").style.width = `${percent}%`;
+
+          // Якщо статус змінився (книга закінчена), тоді перемальовуємо все через 300мс
+          if (oldStatus !== b.status) {
+            setTimeout(render, 300);
+          }
+        }
+
+        saveToFirebase();
       };
 
       window.deleteBook = function (id) {
-        const book = books.find((b) => b.id === id);
-        if (
-          confirm(
-            `Ти точно бажаєш видалити "${book ? book.title : "цю книгу"}"? 🗑️`
-          )
-        ) {
+        if (confirm(`Видалити цю книгу? 🗑️`)) {
           books = books.filter((b) => b.id !== id);
           saveToFirebase();
+          render();
         }
       };
 
       window.saveBook = function () {
         const title = document.getElementById("book-title").value;
-        if (!title) return alert("Введіть назву!");
-
-        const bookData = {
+        if (!title) return;
+        const data = {
+          id: editingId || Date.now(),
           title,
           author: document.getElementById("book-author").value,
           pages: parseFloat(document.getElementById("book-pages").value) || 0,
@@ -375,117 +340,110 @@
             parseFloat(document.getElementById("book-current-page").value) || 0,
           coverUrl: document.getElementById("book-cover").value,
           status: document.getElementById("book-status").value,
-          genre: document.getElementById("book-genre").value,
           deadline: document.getElementById("book-deadline").value,
         };
-
-        if (bookData.pages > 0 && bookData.currentPage >= bookData.pages) {
-          bookData.status = "Finished";
-          bookData.currentPage = bookData.pages;
+        if (data.pages > 0 && data.currentPage >= data.pages) {
+          data.status = "Finished";
+          data.currentPage = data.pages;
         }
 
         if (editingId) {
           const idx = books.findIndex((b) => b.id === editingId);
-          books[idx] = { ...books[idx], ...bookData };
+          books[idx] = data;
         } else {
-          books.push({ id: Date.now(), ...bookData });
+          books.push(data);
         }
         saveToFirebase();
         toggleModal();
-        switchTab(bookData.status);
+        render();
       };
 
-      // 4. UI RENDER
       function render() {
         const grid = document.getElementById("library-grid");
         grid.innerHTML = "";
         const filtered = books.filter((b) => b.status === currentTab);
 
         if (filtered.length === 0) {
-          grid.innerHTML = `<div class="col-span-full py-20 text-center text-slate-300 italic serif">Порожньо</div>`;
+          grid.innerHTML = `<div class="col-span-full py-20 text-center text-slate-300 italic serif">Тут порожньо</div>`;
           return;
         }
 
         filtered.forEach((book, idx) => {
           const percent =
             Math.round((book.currentPage / book.pages) * 100) || 0;
-          let deadlineHtml = "";
-          if (book.status === "Reading" && book.deadline) {
-            deadlineHtml = `<div class="mt-4 pt-3 border-t border-slate-50 flex justify-between items-center"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Дедлайн</span><div class="text-xs font-bold text-slate-900 font-mono deadline-timer" data-deadline="${book.deadline}">...</div></div>`;
-          } else if (book.status === "Finished") {
-            deadlineHtml = `<div class="mt-4 pt-3 border-t border-slate-50 text-center"><span class="text-emerald-600 text-[10px] font-bold uppercase tracking-widest">Completed</span></div>`;
-          }
-
           const card = document.createElement("div");
           card.className =
-            "bg-white p-6 rounded-[1rem] book-card fade-in-up relative group flex flex-col";
-          card.style.animationDelay = `${idx * 0.05}s`;
-
+            "bg-white p-6 rounded-2xl book-card flex flex-col group";
+          card.setAttribute("data-id", book.id);
           card.innerHTML = `
-             <div class="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+            <div class="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                 <button onclick="openModalForEdit(${
                   book.id
-                })" class="bg-white border border-slate-100 rounded-lg w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-all">✎</button>
+                })" class="w-8 h-8 bg-white border border-slate-100 rounded-lg flex items-center justify-center text-slate-400 hover:text-black transition-all shadow-sm">✎</button>
                 <button onclick="deleteBook(${
                   book.id
-                })" class="bg-white border border-slate-100 rounded-lg w-8 h-8 flex items-center justify-center text-red-300 hover:text-red-600 transition-all">×</button>
-             </div>
-             <div class="flex gap-5 mb-4">
-                <div class="w-24 h-36 rounded-md bg-slate-50 flex-shrink-0 overflow-hidden shadow-sm relative border border-slate-100">
-                    ${getCover(book)}
+                })" class="w-8 h-8 bg-white border border-slate-100 rounded-lg flex items-center justify-center text-red-200 hover:text-red-600 transition-all shadow-sm">×</button>
+            </div>
+            <div class="flex gap-4 mb-6">
+                <div class="w-20 h-28 bg-slate-50 rounded-lg overflow-hidden flex-shrink-0 shadow-sm border border-slate-100">
+                    ${
+                      book.coverUrl
+                        ? `<img src="${book.coverUrl}" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500">`
+                        : `<div class="w-full h-full flex items-center justify-center text-slate-200 font-bold serif text-xl">${book.title[0]}</div>`
+                    }
                 </div>
-                <div class="min-w-0 flex-grow py-1 flex flex-col">
-                    <h4 class="font-bold text-slate-900 leading-snug mb-1 text-lg serif italic truncate">${
+                <div class="min-w-0 flex flex-col justify-start">
+                    <h4 class="font-bold text-slate-900 leading-tight mb-1 truncate serif italic text-lg">${
                       book.title
                     }</h4>
-                    <p class="text-sm text-slate-400 truncate mb-auto font-medium">${
+                    <p class="text-[11px] text-slate-400 font-medium truncate uppercase tracking-wider">${
                       book.author
                     }</p>
-                    <span class="inline-block text-[10px] font-bold text-slate-400 uppercase tracking-widest self-start mt-2 border border-slate-100 px-2 py-1 rounded-full">${
-                      book.genre || "Book"
-                    }</span>
-                </div>
-             </div>
-             <div class="mt-auto space-y-3">
-                <div class="flex justify-between items-end">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${Math.round(
-                      book.currentPage
-                    )} / ${
-            book.pages
-          } <span class="text-slate-900 ml-2">${percent}%</span></div>
                     ${
-                      book.status === "Reading"
-                        ? `<button onclick="addPage(${book.id})" class="plus-btn w-7 h-7 bg-slate-900 text-white rounded-lg flex items-center justify-center text-lg font-bold shadow-md hover:bg-slate-700">+</button>`
+                      book.deadline && currentTab === "Reading"
+                        ? `<div class="mt-4 text-[9px] font-mono font-bold text-slate-400 uppercase tracking-tighter deadline-timer" data-deadline="${book.deadline}">Loading...</div>`
                         : ""
                     }
                 </div>
-                <div class="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
-                    <div class="h-full bg-slate-900 transition-all duration-500" style="width: ${percent}%"></div>
+            </div>
+            <div class="mt-auto">
+                <div class="flex justify-between items-end mb-3">
+                    <div class="text-[10px] font-bold text-slate-300 uppercase tracking-widest">Progress <span class="text-slate-900 ml-1 progress-text">${percent}%</span></div>
+                    <div class="flex items-center gap-1.5 bg-slate-50 p-1 rounded-lg border border-slate-100">
+                        ${
+                          book.status === "Reading"
+                            ? `<button onclick="changePage(${book.id}, -1)" class="control-btn w-6 h-6 flex items-center justify-center bg-white rounded-md shadow-sm text-slate-400 hover:text-red-500 text-sm font-bold"> - </button>`
+                            : ""
+                        }
+                        <span class="text-[10px] font-mono font-bold text-slate-600 px-1 page-count">${Math.round(
+                          book.currentPage
+                        )}/${book.pages}</span>
+                        ${
+                          book.status === "Reading"
+                            ? `<button onclick="changePage(${book.id}, 1)" class="control-btn w-6 h-6 flex items-center justify-center bg-white rounded-md shadow-sm text-slate-400 hover:text-emerald-500 text-sm font-bold"> + </button>`
+                            : ""
+                        }
+                    </div>
                 </div>
-             </div>
-             ${deadlineHtml}
+                <div class="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-slate-900 transition-all duration-300 progress-bar-inner" style="width: ${percent}%"></div>
+                </div>
+            </div>
           `;
           grid.appendChild(card);
         });
-
         if (currentTab === "Reading") startTimers();
       }
 
-      function getCover(b) {
-        return b.coverUrl
-          ? `<img src="${b.coverUrl}" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500">`
-          : `<div class="w-full h-full flex items-center justify-center font-bold text-slate-200 text-2xl serif italic">${b.title[0]}</div>`;
-      }
-
-      // 5. UTILS
       window.switchTab = function (t) {
         currentTab = t;
-        ["Reading", "Queue", "Finished", "Paused"].forEach((n) => {
-          document.getElementById(`tab-${n}`).className =
-            n === t
-              ? "tab-active tab-btn py-4 text-sm font-medium"
-              : "tab-inactive tab-btn py-4 text-sm font-medium";
-        });
+        ["Reading", "Queue", "Finished", "Paused"].forEach(
+          (n) =>
+            (document.getElementById(`tab-${n}`).className =
+              n === t
+                ? "tab-active tab-btn py-4 text-sm font-medium"
+                : "tab-btn py-4 text-sm font-medium")
+        );
         document.getElementById("section-title").innerText =
           t === "Reading"
             ? "Активні книги"
@@ -502,7 +460,7 @@
         const update = () => {
           document.querySelectorAll(".deadline-timer").forEach((el) => {
             const diff = new Date(el.dataset.deadline) - new Date();
-            if (diff < 0) return (el.innerHTML = "Time Up");
+            if (diff < 0) return (el.innerHTML = "Час вийшов");
             const d = Math.floor(diff / 864e5),
               h = Math.floor((diff % 864e5) / 36e5),
               m = Math.floor((diff % 36e5) / 6e4);
@@ -518,7 +476,9 @@
         editingId = null;
       };
       window.openModalForAdd = function () {
+        editingId = null;
         resetInputs();
+        document.getElementById("modal-title").innerText = "Нова книга";
         toggleModal();
       };
       window.openModalForEdit = function (id) {
@@ -531,7 +491,6 @@
         document.getElementById("book-current-page").value = b.currentPage;
         document.getElementById("book-cover").value = b.coverUrl || "";
         document.getElementById("book-status").value = b.status;
-        document.getElementById("book-genre").value = b.genre || "Fiction";
         document.getElementById("book-deadline").value = b.deadline || "";
         toggleModal();
       };
@@ -561,7 +520,6 @@
             ).value = `https://covers.openlibrary.org/b/id/${d.docs[0].cover_i}-L.jpg`;
         } catch (e) {}
       };
-
       switchTab("Reading");
     </script>
   </body>
