@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Premium Book Tracker v5.0 | Strict Edition</title>
+    <title>Premium Book Tracker v5.1 | Final Strict Edition</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -15,7 +15,7 @@
 
       body {
         font-family: "Inter", sans-serif;
-        background-color: #f9fafb; /* Дуже світлий сірий, майже білий */
+        background-color: #f9fafb;
         color: #111827;
         overflow-x: hidden;
       }
@@ -41,12 +41,12 @@
         }
       }
 
-      /* НОВІ ВКЛАДКИ (Minimalist) */
+      /* ВКЛАДКИ */
       .tab-btn {
         position: relative;
         transition: all 0.2s ease;
         border-bottom: 2px solid transparent;
-        color: #6b7280; /* Сірий текст */
+        color: #6b7280;
         fill: #6b7280;
       }
 
@@ -56,8 +56,8 @@
       }
 
       .tab-active {
-        color: #111827; /* Чорний текст */
-        border-bottom-color: #111827; /* Чорна лінія */
+        color: #111827;
+        border-bottom-color: #111827;
         fill: #111827;
       }
 
@@ -65,14 +65,9 @@
         width: 18px;
         height: 18px;
         margin-right: 8px;
-        transition: transform 0.2s;
       }
 
-      .tab-active .tab-icon {
-        transform: scale(1.1);
-      }
-
-      /* Картки та інше */
+      /* Картки */
       .book-card {
         transition: all 0.3s ease;
         border: 1px solid #f3f4f6;
@@ -82,12 +77,23 @@
         box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
         border-color: #e5e7eb;
       }
+
       .no-scrollbar::-webkit-scrollbar {
         display: none;
       }
       .no-scrollbar {
         -ms-overflow-style: none;
         scrollbar-width: none;
+      }
+
+      /* Стилізація кнопок на картці */
+      .card-action-btn {
+        background: white;
+        border: 1px solid #f3f4f6;
+        transition: all 0.2s ease;
+      }
+      .card-action-btn:hover {
+        transform: scale(1.1);
       }
     </style>
   </head>
@@ -107,11 +113,10 @@
             Reading Journey
           </p>
         </div>
-
         <div id="connection-status" class="hidden">
-          <span class="text-slate-400 text-[10px] font-mono animate-pulse">
-            ● Saving...
-          </span>
+          <span class="text-slate-400 text-[10px] font-mono animate-pulse"
+            >● Saving...</span
+          >
         </div>
       </header>
 
@@ -210,37 +215,19 @@
             <span>+</span> Додати книгу
           </button>
         </div>
-
         <div
           id="library-grid"
           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 min-h-[300px]"
-        >
-          <div
-            class="col-span-full flex flex-col items-center justify-center text-slate-300 py-20"
-          >
-            <svg
-              class="animate-spin h-6 w-6 text-slate-300 mb-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
-            </svg>
-            <span class="text-xs uppercase tracking-widest"
-              >Завантаження...</span
-            >
-          </div>
-        </div>
+        ></div>
       </main>
     </div>
 
     <div
       id="modal"
-      class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4 transition-opacity duration-300"
+      class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4"
     >
       <div
-        class="bg-white rounded-[1.5rem] p-8 md:p-10 max-w-2xl w-full shadow-2xl space-y-8 transform transition-all scale-100"
+        class="bg-white rounded-[1.5rem] p-8 md:p-10 max-w-2xl w-full shadow-2xl space-y-8 transform transition-all"
       >
         <div
           class="flex justify-between items-center border-b border-slate-100 pb-4"
@@ -250,7 +237,7 @@
           </h3>
           <button
             onclick="toggleModal()"
-            class="text-slate-400 hover:text-slate-900 transition-colors"
+            class="text-slate-400 hover:text-slate-900"
           >
             <svg
               width="24"
@@ -265,150 +252,94 @@
             </svg>
           </button>
         </div>
-
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div class="space-y-5">
-            <div class="space-y-1">
-              <label
-                class="text-[11px] font-bold text-slate-500 uppercase tracking-wider"
-                >Основна інформація</label
-              >
+            <input
+              id="book-title"
+              type="text"
+              placeholder="Назва книги"
+              class="w-full px-4 py-3.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-slate-900 outline-none font-medium"
+            />
+            <input
+              id="book-author"
+              type="text"
+              placeholder="Автор"
+              class="w-full px-4 py-3.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-slate-900 outline-none"
+            />
+            <div class="relative">
               <input
-                id="book-title"
+                id="book-cover"
                 type="text"
-                placeholder="Назва книги"
-                class="w-full px-4 py-3.5 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none text-base font-medium text-slate-900 placeholder-slate-400 transition-all"
+                placeholder="URL картинки"
+                class="w-full px-4 py-3.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-slate-900 outline-none pr-10"
               />
-              <input
-                id="book-author"
-                type="text"
-                placeholder="Автор"
-                class="w-full px-4 py-3.5 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none text-sm text-slate-900 placeholder-slate-400 transition-all mt-3"
-              />
-            </div>
-
-            <div class="space-y-1">
-              <label
-                class="text-[11px] font-bold text-slate-500 uppercase tracking-wider"
-                >Обкладинка</label
+              <button
+                onclick="autoFillCover()"
+                class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 p-2"
               >
-              <div class="relative">
-                <input
-                  id="book-cover"
-                  type="text"
-                  placeholder="URL картинки"
-                  class="w-full px-4 py-3.5 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-slate-900 outline-none text-sm pr-10"
-                />
-                <button
-                  onclick="autoFillCover()"
-                  class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 p-2 rounded-md transition-all"
-                  title="Знайти обкладинку"
+                <svg
+                  id="search-icon"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
                 >
-                  <svg
-                    id="search-icon"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                  </svg>
-                  <svg
-                    id="loading-icon"
-                    class="hidden animate-spin-custom"
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
-                  </svg>
-                </button>
-              </div>
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </button>
             </div>
-
-            <div class="space-y-1">
-              <label
-                class="text-[11px] font-bold text-slate-500 uppercase tracking-wider"
-                >Дедлайн ⏱</label
-              >
-              <input
-                id="book-deadline"
-                type="datetime-local"
-                class="w-full px-4 py-3.5 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-slate-900 outline-none text-sm cursor-pointer text-slate-600"
-              />
-            </div>
+            <input
+              id="book-deadline"
+              type="datetime-local"
+              class="w-full px-4 py-3.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-slate-900 outline-none"
+            />
           </div>
-
           <div class="space-y-5">
-            <div class="space-y-1">
-              <label
-                class="text-[11px] font-bold text-slate-500 uppercase tracking-wider"
-                >Налаштування</label
-              >
+            <select
+              id="book-status"
+              class="w-full px-4 py-3.5 rounded-lg border border-slate-200 outline-none"
+            >
+              <option value="Reading">Читаю</option>
+              <option value="Queue">У черзі</option>
+              <option value="Finished">Прочитано</option>
+              <option value="Paused">На паузі</option>
+            </select>
+            <div class="grid grid-cols-2 gap-4">
               <select
-                id="book-status"
-                class="w-full px-4 py-3.5 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-slate-900 outline-none text-sm cursor-pointer text-slate-700"
+                id="book-type"
+                onchange="handleTypeChange()"
+                class="w-full px-4 py-3.5 rounded-lg border border-slate-200 outline-none"
               >
-                <option value="Reading">Читаю</option>
-                <option value="Queue">У черзі</option>
-                <option value="Finished">Прочитано</option>
-                <option value="Paused">На паузі</option>
+                <option value="Physical">Папір</option>
+                <option value="Digital">Digital</option>
+                <option value="Audio">Аудіо</option>
+              </select>
+              <select
+                id="book-genre"
+                class="w-full px-4 py-3.5 rounded-lg border border-slate-200 outline-none"
+              >
+                <option value="Fiction">Фантастика</option>
+                <option value="Business">Бізнес</option>
+                <option value="Psychology">Психологія</option>
+                <option value="Biography">Біографія</option>
+                <option value="History">Історія</option>
+                <option value="Classic">Класика</option>
+                <option value="Other">Інше</option>
               </select>
             </div>
-
             <div class="grid grid-cols-2 gap-4">
-              <div class="space-y-1">
-                <label
-                  class="text-[11px] font-bold text-slate-500 uppercase tracking-wider"
-                  >Тип</label
-                >
-                <select
-                  id="book-type"
-                  onchange="handleTypeChange()"
-                  class="w-full px-4 py-3.5 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-slate-900 outline-none text-sm cursor-pointer text-slate-700"
-                >
-                  <option value="Physical">Папір</option>
-                  <option value="Digital">Digital</option>
-                  <option value="Audio">Аудіо</option>
-                </select>
-              </div>
-              <div class="space-y-1">
-                <label
-                  class="text-[11px] font-bold text-slate-500 uppercase tracking-wider"
-                  >Жанр</label
-                >
-                <select
-                  id="book-genre"
-                  class="w-full px-4 py-3.5 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-slate-900 outline-none text-sm cursor-pointer text-slate-700"
-                >
-                  <option value="Fiction">Фантастика</option>
-                  <option value="Business">Бізнес</option>
-                  <option value="Psychology">Психологія</option>
-                  <option value="Biography">Біографія</option>
-                  <option value="History">Історія</option>
-                  <option value="Classic">Класика</option>
-                  <option value="Other">Інше</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4 pt-2">
               <div class="space-y-1">
                 <label
                   id="label-pages"
                   class="text-[11px] font-bold text-slate-400 uppercase tracking-wider"
                   >Всього</label
-                >
-                <input
+                ><input
                   id="book-pages"
                   type="number"
-                  class="w-full px-4 py-3.5 rounded-lg border border-slate-200 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-slate-900 outline-none text-sm font-mono"
+                  class="w-full px-4 py-3.5 rounded-lg border border-slate-200 bg-slate-50 font-mono"
                 />
               </div>
               <div class="space-y-1">
@@ -416,36 +347,34 @@
                   id="label-current"
                   class="text-[11px] font-bold text-emerald-600 uppercase tracking-wider"
                   >Прочитано</label
-                >
-                <input
+                ><input
                   id="book-current-page"
                   type="number"
-                  class="w-full px-4 py-3.5 rounded-lg border border-emerald-200 bg-emerald-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 outline-none text-sm font-mono text-emerald-900"
+                  class="w-full px-4 py-3.5 rounded-lg border border-emerald-200 bg-emerald-50 font-mono"
                 />
               </div>
             </div>
           </div>
         </div>
-
-        <div class="flex gap-4 pt-6 mt-2 border-t border-slate-100">
+        <div class="flex gap-4 pt-6 border-t border-slate-100">
           <button
             onclick="toggleModal()"
-            class="flex-1 py-4 text-sm font-bold text-slate-500 hover:text-slate-900 transition-colors"
+            class="flex-1 py-4 text-sm font-bold text-slate-500 hover:text-slate-900"
           >
             Скасувати
           </button>
           <button
             onclick="saveBook()"
-            class="flex-1 py-4 bg-slate-900 text-white text-sm font-bold rounded-xl shadow-xl shadow-slate-200 active:scale-95 transition-all hover:bg-black"
+            class="flex-1 py-4 bg-slate-900 text-white text-sm font-bold rounded-xl shadow-xl active:scale-95 hover:bg-black"
           >
-            Зберегти книгу
+            Зберегти
           </button>
         </div>
       </div>
     </div>
 
     <script>
-      // CONFIG
+      // 1. CONFIG
       const firebaseConfig = {
         apiKey: "AIzaSyAbO6lwsmvFkaecs566Hat85u2M5y_JhtM",
         authDomain: "mylibrarytracker.firebaseapp.com",
@@ -460,14 +389,14 @@
       firebase.initializeApp(firebaseConfig);
       const db = firebase.database();
 
-      // STATE
+      // 2. STATE
       let books = [];
       let editingId = null;
       let currentTab = "Reading";
       let timerInterval = null;
       const statusDiv = document.getElementById("connection-status");
 
-      // SYNC
+      // 3. SYNC
       db.ref("books").on("value", (snapshot) => {
         const data = snapshot.val();
         books = data ? data : [];
@@ -476,151 +405,31 @@
         render();
       });
 
-      function saveToFirebase() {
+      window.saveToFirebase = function () {
         statusDiv.classList.remove("hidden");
         db.ref("books")
           .set(books)
-          .catch((err) => alert(err.message));
-      }
+          .catch((err) => alert("Error: " + err.message));
+      };
 
-      // TABS LOGIC
-      function switchTab(tabName) {
-        currentTab = tabName;
-        ["Reading", "Queue", "Finished", "Paused"].forEach((t) => {
-          const btn = document.getElementById(`tab-${t}`);
-          if (t === tabName)
-            btn.className =
-              "tab-active tab-btn py-4 flex items-center text-sm font-medium";
-          else
-            btn.className =
-              "tab-inactive tab-btn py-4 flex items-center text-sm font-medium";
-        });
-        render();
-      }
-
-      // TIMER
-      function startTimers() {
-        if (timerInterval) clearInterval(timerInterval);
-        updateCountdowns();
-        timerInterval = setInterval(updateCountdowns, 1000);
-      }
-
-      function updateCountdowns() {
-        const timerElements = document.querySelectorAll(".deadline-timer");
-        if (timerElements.length === 0) return;
-        timerElements.forEach((el) => {
-          const deadline = new Date(el.dataset.deadline).getTime();
-          const now = new Date().getTime();
-          const distance = deadline - now;
-          if (distance < 0) {
-            el.innerHTML = "<span class='text-rose-500'>Прострочено</span>";
-            return;
-          }
-          const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-          const hours = Math.floor(
-            (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-          );
-          const minutes = Math.floor(
-            (distance % (1000 * 60 * 60)) / (1000 * 60)
-          );
-          el.innerHTML = `${days}д ${hours}г ${minutes}хв`;
-        });
-      }
-
-      // RENDER
-      function render() {
-        const grid = document.getElementById("library-grid");
-        grid.innerHTML = "";
-        const filteredBooks = books.filter((b) => b.status === currentTab);
-
-        if (filteredBooks.length === 0) {
-          grid.innerHTML = `<div class="col-span-full flex flex-col items-center justify-center text-slate-400 py-16 space-y-4 fade-in-up"><span class="text-4xl opacity-20 font-serif italic">Empty</span><p class="text-sm font-medium text-slate-400">Вкладка порожня</p></div>`;
-          return;
+      // 4. ACTIONS
+      window.deleteBook = function (id) {
+        const book = books.find((b) => b.id === id);
+        if (
+          confirm(
+            `Ви дійсно хочете видалити книгу "${book ? book.title : ""}"? 🗑️`
+          )
+        ) {
+          books = books.filter((b) => b.id !== id);
+          saveToFirebase();
         }
+      };
 
-        let delayIndex = 0;
-        filteredBooks.forEach((book) => {
-          const percent =
-            Math.round((book.currentPage / book.pages) * 100) || 0;
-          let deadlineHtml = "";
-          if (book.status === "Reading" && book.deadline) {
-            deadlineHtml = `<div class="mt-4 pt-3 border-t border-slate-50 flex justify-between items-center"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Дедлайн</span><div class="text-xs font-bold text-slate-900 font-mono deadline-timer" data-deadline="${book.deadline}">...</div></div>`;
-          } else if (book.status === "Finished") {
-            deadlineHtml = `<div class="mt-4 pt-3 border-t border-slate-50 text-center"><span class="text-emerald-600 text-[10px] font-bold uppercase tracking-widest">Completed</span></div>`;
-          }
-
-          const card = document.createElement("div");
-          card.className =
-            "bg-white p-6 rounded-[1rem] book-card fade-in-up relative group flex flex-col";
-          card.style.animationDelay = `${delayIndex * 0.05}s`;
-
-          card.innerHTML = `
-             <div class="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                <button onclick="openModalForEdit(${
-                  book.id
-                })" class="bg-white border border-slate-200 rounded-lg w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors">✎</button>
-                <button onclick="deleteBook(${
-                  book.id
-                })" class="bg-white border border-slate-200 rounded-lg w-8 h-8 flex items-center justify-center text-slate-400 hover:text-rose-500 transition-colors">×</button>
-             </div>
-             
-             <div class="flex gap-5 mb-4">
-                <div class="w-24 h-36 rounded-md bg-slate-100 flex-shrink-0 overflow-hidden shadow-sm relative border border-slate-100">
-                    ${getCoverHtml(book)}
-                    <div class="absolute top-1 left-1 text-[10px] bg-white/90 px-1.5 rounded-sm backdrop-blur font-bold shadow-sm">${getTypeIcon(
-                      book.type
-                    )}</div>
-                </div>
-                <div class="min-w-0 flex-grow py-1 flex flex-col">
-                    <h4 class="font-bold text-slate-900 leading-snug mb-1 text-lg serif italic">${
-                      book.title
-                    }</h4>
-                    <p class="text-sm text-slate-500 truncate mb-auto font-medium">${
-                      book.author
-                    }</p>
-                    <span class="inline-block text-[10px] font-bold text-slate-400 uppercase tracking-wider self-start mt-2 border border-slate-100 px-2 py-1 rounded-full">${
-                      book.genre || "Book"
-                    }</span>
-                </div>
-             </div>
-
-             <div class="mt-auto space-y-2">
-                <div class="flex justify-between text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                     <span>${Math.round(book.currentPage)} / ${
-            book.pages
-          }</span>
-                     <span class="text-slate-900">${percent}%</span>
-                </div>
-                <div class="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
-                    <div class="h-full bg-slate-900 rounded-full" style="width: ${percent}%"></div>
-                </div>
-             </div>
-             ${deadlineHtml}
-          `;
-          grid.appendChild(card);
-          delayIndex++;
-        });
-
-        if (currentTab === "Reading") startTimers();
-        else if (timerInterval) clearInterval(timerInterval);
-      }
-
-      // HELPERS
-      function getCoverHtml(book) {
-        if (book.coverUrl)
-          return `<img src="${book.coverUrl}" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'"><div class="hidden w-full h-full items-center justify-center font-bold text-slate-300 bg-slate-50 text-xl serif italic">${book.title[0]}</div>`;
-        return `<div class="w-full h-full flex items-center justify-center font-bold text-slate-300 bg-slate-50 text-xl serif italic">${book.title[0]}</div>`;
-      }
-      function getTypeIcon(t) {
-        return t === "Audio" ? "🎧" : t === "Digital" ? "📱" : "📖";
-      }
-
-      // ACTIONS
-      function saveBook() {
+      window.saveBook = function () {
         const title = document.getElementById("book-title").value;
-        if (!title) return;
+        if (!title) return alert("Введіть назву!");
         const bookData = {
-          title: title,
+          title,
           author: document.getElementById("book-author").value,
           pages: parseFloat(document.getElementById("book-pages").value) || 0,
           currentPage:
@@ -636,67 +445,147 @@
           bookData.currentPage = bookData.pages;
         }
         if (editingId) {
-          const index = books.findIndex((b) => b.id === editingId);
-          books[index] = { ...books[index], ...bookData };
+          const idx = books.findIndex((b) => b.id === editingId);
+          books[idx] = { ...books[idx], ...bookData };
         } else {
           books.push({ id: Date.now(), ...bookData });
         }
         saveToFirebase();
         toggleModal();
-        switchTab(bookData.status);
-      }
+      };
 
-      function deleteBook(id) {
-        if (confirm("Видалити книгу?")) {
-          books = books.filter((b) => b.id !== id);
-          saveToFirebase();
+      // 5. RENDER
+      function render() {
+        const grid = document.getElementById("library-grid");
+        grid.innerHTML = "";
+        const filtered = books.filter((b) => b.status === currentTab);
+
+        if (filtered.length === 0) {
+          grid.innerHTML = `<div class="col-span-full py-20 text-center text-slate-400 italic">Тут ще немає книг</div>`;
+          return;
         }
+
+        filtered.forEach((book, idx) => {
+          const percent =
+            Math.round((book.currentPage / book.pages) * 100) || 0;
+          let deadlineHtml = "";
+          if (book.status === "Reading" && book.deadline) {
+            deadlineHtml = `<div class="mt-4 pt-3 border-t border-slate-50 flex justify-between items-center"><span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Дедлайн</span><div class="text-xs font-bold text-slate-900 font-mono deadline-timer" data-deadline="${book.deadline}">...</div></div>`;
+          }
+
+          const card = document.createElement("div");
+          card.className =
+            "bg-white p-6 rounded-[1rem] book-card fade-in-up relative group flex flex-col";
+          card.style.animationDelay = `${idx * 0.05}s`;
+          card.innerHTML = `
+             <div class="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                <button onclick="openModalForEdit(${
+                  book.id
+                })" class="card-action-btn w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-900">✎</button>
+                <button onclick="deleteBook(${
+                  book.id
+                })" class="card-action-btn w-8 h-8 rounded-lg flex items-center justify-center text-red-300 hover:text-red-600">×</button>
+             </div>
+             <div class="flex gap-5 mb-4">
+                <div class="w-24 h-36 rounded-md bg-slate-100 overflow-hidden relative border border-slate-100">
+                    ${getCover(book)}
+                    <div class="absolute top-1 left-1 text-[10px] bg-white/90 px-1.5 rounded-sm font-bold shadow-sm">${getType(
+                      book.type
+                    )}</div>
+                </div>
+                <div class="min-w-0 flex-grow flex flex-col">
+                    <h4 class="font-bold text-slate-900 leading-snug mb-1 text-lg serif italic">${
+                      book.title
+                    }</h4>
+                    <p class="text-sm text-slate-500 truncate mb-auto font-medium">${
+                      book.author
+                    }</p>
+                    <span class="inline-block text-[10px] font-bold text-slate-400 uppercase tracking-wider self-start mt-2 border border-slate-100 px-2 py-1 rounded-full">${
+                      book.genre
+                    }</span>
+                </div>
+             </div>
+             <div class="mt-auto space-y-2">
+                <div class="flex justify-between text-[10px] font-bold text-slate-400"><span>${Math.round(
+                  book.currentPage
+                )} / ${book.pages}</span><span>${percent}%</span></div>
+                <div class="w-full h-1 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-slate-900" style="width: ${percent}%"></div></div>
+             </div>
+             ${deadlineHtml}
+          `;
+          grid.appendChild(card);
+        });
+        if (currentTab === "Reading") startTimers();
       }
 
-      function toggleModal() {
-        const modal = document.getElementById("modal");
-        modal.classList.toggle("hidden");
-        if (modal.classList.contains("hidden")) editingId = null;
+      function getCover(b) {
+        return b.coverUrl
+          ? `<img src="${b.coverUrl}" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500">`
+          : `<div class="w-full h-full flex items-center justify-center font-bold text-slate-300 bg-slate-50 text-xl serif">${b.title[0]}</div>`;
       }
-      function openModalForAdd() {
+      function getType(t) {
+        return t === "Audio" ? "🎧" : t === "Digital" ? "📱" : "📖";
+      }
+
+      // 6. UTILS
+      window.switchTab = function (t) {
+        currentTab = t;
+        ["Reading", "Queue", "Finished", "Paused"].forEach((n) => {
+          document.getElementById(`tab-${n}`).className =
+            n === t
+              ? "tab-active tab-btn py-4 flex items-center text-sm font-medium"
+              : "tab-inactive tab-btn py-4 flex items-center text-sm font-medium";
+        });
+        document.getElementById("section-title").innerText =
+          t === "Reading"
+            ? "Активні книги"
+            : t === "Queue"
+            ? "В черзі"
+            : t === "Finished"
+            ? "Прочитано"
+            : "На паузі";
+        render();
+      };
+
+      function startTimers() {
+        if (timerInterval) clearInterval(timerInterval);
+        const update = () => {
+          document.querySelectorAll(".deadline-timer").forEach((el) => {
+            const diff = new Date(el.dataset.deadline) - new Date();
+            if (diff < 0) return (el.innerHTML = "Прострочено");
+            const d = Math.floor(diff / 864e5),
+              h = Math.floor((diff % 864e5) / 36e5),
+              m = Math.floor((diff % 36e5) / 6e4);
+            el.innerHTML = `${d}д ${h}г ${m}хв`;
+          });
+        };
+        update();
+        timerInterval = setInterval(update, 1000);
+      }
+
+      window.toggleModal = function () {
+        document.getElementById("modal").classList.toggle("hidden");
         editingId = null;
-        document.getElementById("modal-title").innerText = "Нова книга";
+      };
+      window.openModalForAdd = function () {
         resetInputs();
-        document.getElementById("book-status").value =
-          currentTab === "Reading"
-            ? "Reading"
-            : currentTab === "Queue"
-            ? "Queue"
-            : "Reading";
         toggleModal();
-      }
-      function openModalForEdit(id) {
-        const book = books.find((b) => b.id === id);
-        if (!book) return;
+      };
+      window.openModalForEdit = function (id) {
+        const b = books.find((x) => x.id === id);
         editingId = id;
         document.getElementById("modal-title").innerText = "Редагувати";
-        document.getElementById("book-title").value = book.title;
-        document.getElementById("book-author").value = book.author;
-        document.getElementById("book-pages").value = book.pages;
-        document.getElementById("book-current-page").value = book.currentPage;
-        document.getElementById("book-cover").value = book.coverUrl || "";
-        document.getElementById("book-status").value = book.status;
-        document.getElementById("book-type").value = book.type || "Physical";
-        document.getElementById("book-genre").value = book.genre || "Fiction";
-        document.getElementById("book-deadline").value = book.deadline || "";
-        handleTypeChange();
+        document.getElementById("book-title").value = b.title;
+        document.getElementById("book-author").value = b.author;
+        document.getElementById("book-pages").value = b.pages;
+        document.getElementById("book-current-page").value = b.currentPage;
+        document.getElementById("book-cover").value = b.coverUrl || "";
+        document.getElementById("book-status").value = b.status;
+        document.getElementById("book-type").value = b.type;
+        document.getElementById("book-genre").value = b.genre;
+        document.getElementById("book-deadline").value = b.deadline || "";
         toggleModal();
-      }
-      function handleTypeChange() {
-        const type = document.getElementById("book-type").value;
-        const isAudio = type === "Audio";
-        document.getElementById("label-pages").innerText = isAudio
-          ? "Всього"
-          : "Всього";
-        document.getElementById("label-current").innerText = isAudio
-          ? "Прослухано"
-          : "Прочитано";
-      }
+      };
       function resetInputs() {
         [
           "book-title",
@@ -706,37 +595,26 @@
           "book-cover",
           "book-deadline",
         ].forEach((id) => (document.getElementById(id).value = ""));
-        document.getElementById("book-status").value = "Reading";
-        document.getElementById("book-type").value = "Physical";
-        handleTypeChange();
       }
-
-      async function autoFillCover() {
-        const title = document.getElementById("book-title").value;
-        const author = document.getElementById("book-author").value;
-        if (!title) return alert("Введіть назву");
-        const searchIcon = document.getElementById("search-icon");
-        const loadingIcon = document.getElementById("loading-icon");
-        searchIcon.classList.add("hidden");
-        loadingIcon.classList.remove("hidden");
+      window.handleTypeChange = function () {};
+      window.autoFillCover = async function () {
+        const t = document.getElementById("book-title").value;
+        if (!t) return alert("Введіть назву");
         try {
-          const query = encodeURIComponent(`${title} ${author}`);
-          const response = await fetch(
-            `https://openlibrary.org/search.json?q=${query}&limit=1`
+          const r = await fetch(
+            `https://openlibrary.org/search.json?q=${encodeURIComponent(
+              t
+            )}&limit=1`
           );
-          const data = await response.json();
-          if (data.docs?.[0]?.cover_i)
+          const d = await r.json();
+          if (d.docs?.[0]?.cover_i)
             document.getElementById(
               "book-cover"
-            ).value = `https://covers.openlibrary.org/b/id/${data.docs[0].cover_i}-L.jpg`;
-          else alert("Обкладинку не знайдено");
+            ).value = `https://covers.openlibrary.org/b/id/${d.docs[0].cover_i}-L.jpg`;
         } catch (e) {
-          console.error(e);
-        } finally {
-          searchIcon.classList.remove("hidden");
-          loadingIcon.classList.add("hidden");
+          alert("Не знайдено");
         }
-      }
+      };
 
       switchTab("Reading");
     </script>
