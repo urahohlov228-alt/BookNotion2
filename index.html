@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Premium Book Tracker v5.4 | Smooth Edition</title>
+    <title>Premium Book Tracker v5.5 | Color & Zoom</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
@@ -255,11 +255,8 @@
         currentTab = "Reading",
         timerInterval = null;
 
-      // 1. СЛУХАЄМО ДАНІ ОДИН РАЗ ДЛЯ СТАРТУ
       db.ref("books").on("value", (snap) => {
         const newBooks = snap.val() || [];
-        // Оновлюємо інтерфейс тільки якщо змінилася КІЛЬКІСТЬ книг або ТАБ
-        // Це запобігає смиканню при простому натисканні +/-
         if (JSON.stringify(newBooks) !== JSON.stringify(books)) {
           books = newBooks;
           render();
@@ -281,7 +278,6 @@
           });
       }
 
-      // 2. ОПТИМІЗОВАНА ЗМІНА ПРОГРЕСУ
       window.changePage = function (id, delta) {
         const idx = books.findIndex((b) => b.id === id);
         if (idx === -1) return;
@@ -301,7 +297,6 @@
           b.status = "Reading";
         }
 
-        // Оновлюємо конкретні елементи в DOM без перемальовування всього списку
         const card = document.querySelector(`[data-id="${id}"]`);
         if (card) {
           const percent = Math.round((b.currentPage / b.pages) * 100) || 0;
@@ -310,13 +305,8 @@
             b.currentPage
           )}/${b.pages}`;
           card.querySelector(".progress-bar-inner").style.width = `${percent}%`;
-
-          // Якщо статус змінився (книга закінчена), тоді перемальовуємо все через 300мс
-          if (oldStatus !== b.status) {
-            setTimeout(render, 300);
-          }
+          if (oldStatus !== b.status) setTimeout(render, 300);
         }
-
         saveToFirebase();
       };
 
@@ -385,10 +375,10 @@
                 })" class="w-8 h-8 bg-white border border-slate-100 rounded-lg flex items-center justify-center text-red-200 hover:text-red-600 transition-all shadow-sm">×</button>
             </div>
             <div class="flex gap-4 mb-6">
-                <div class="w-20 h-28 bg-slate-50 rounded-lg overflow-hidden flex-shrink-0 shadow-sm border border-slate-100">
+                <div class="w-20 h-28 bg-slate-50 rounded-lg overflow-hidden flex-shrink-0 shadow-sm border border-slate-100 relative z-0">
                     ${
                       book.coverUrl
-                        ? `<img src="${book.coverUrl}" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500">`
+                        ? `<img src="${book.coverUrl}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">`
                         : `<div class="w-full h-full flex items-center justify-center text-slate-200 font-bold serif text-xl">${book.title[0]}</div>`
                     }
                 </div>
@@ -399,9 +389,10 @@
                     <p class="text-[11px] text-slate-400 font-medium truncate uppercase tracking-wider">${
                       book.author
                     }</p>
+                    
                     ${
                       book.deadline && currentTab === "Reading"
-                        ? `<div class="mt-4 text-[9px] font-mono font-bold text-slate-400 uppercase tracking-tighter deadline-timer" data-deadline="${book.deadline}">Loading...</div>`
+                        ? `<div class="mt-4 text-xs font-mono font-bold text-slate-500 uppercase tracking-tight deadline-timer" data-deadline="${book.deadline}">Loading...</div>`
                         : ""
                     }
                 </div>
